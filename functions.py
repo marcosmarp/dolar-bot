@@ -95,12 +95,12 @@ def check_new_posts(posts):
                   reply_comment(comment)
                   inform_reply_on_screen(comment)
                   store_reply(comment)
-                  #sleep(600)
+                  sleep(600)
                 else:
                   print("Comment already replied", file=stderr)
                   print("---------------", file=stderr)
               else: 
-                print("Comment doesn't mentions 'Lorelai' or 'Lorelei", file=stderr)
+                print("Comment doesn't mention 'dolar' or 'dólar'", file=stderr)
                 print("---------------", file=stderr)
             else:
               print("Comment doesn't have body", file=stderr)
@@ -116,4 +116,4 @@ def check_new_posts(posts):
       print("---------------", file=stderr)
 
 def run_bot(subreddit_handler):
- check_new_posts(subreddit_handler.new(limit=15))
+  check_new_posts(subreddit_handler.new(limit=10))
