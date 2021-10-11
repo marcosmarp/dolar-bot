@@ -8,6 +8,5 @@ republica_argentina_subreddit = reddit_handler.subreddit("republica_argentina")
 test_subreddit = reddit_handler.subreddit("dolarbot")
 
 while(True):
-  run_bot(republica_argentina_subreddit)
-  run_bot(RepublicaArgentina_subreddit)
+  run_bot([argentina_subreddit, republica_argentina_subreddit, RepublicaArgentina_subreddit])
 

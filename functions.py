@@ -1,11 +1,20 @@
 from praw import Reddit
 from os import environ
 from sys import stderr
-from time import sleep
+from time import sleep, time
+from praw.reddit import Subreddit
 import pytz
 from datetime import datetime
 from requests import get
 from bs4 import BeautifulSoup
+
+def reset_timer():
+  return time()
+
+# I discount the waiting time in the initial declaration so the first loop gets done immediately
+RepublicaArgentina_timer = reset_timer() - 600
+republica_argentina_timer = reset_timer() - 600
+argentina_timer = reset_timer() - 600
 
 def init_praw():
   return Reddit(
@@ -88,19 +97,27 @@ def check_new_posts(posts):
             print("   Checking " + comment.author.name + "'s comment", file=stderr)
             if hasattr(comment, "body"):
               print("     Comment have body", file=stderr)
-              if "dólar" in comment.body.lower() or "dolar" in comment.body.lower():
-                print("       Comment mentions 'dolar' or 'dólar'", file=stderr)
+              if "!dolar" in comment.body.lower() or "!dólar" in comment.body.lower():
+                print("       Comment mentions '!dolar' or '!dólar'", file=stderr)
                 if not AlreadyReplied(comment.replies):
                   print("         Comment yet to be replied", file=stderr)
                   reply_comment(comment)
                   inform_reply_on_screen(comment)
                   store_reply(comment)
-                  sleep(600)
+                  if post.subreddit.display_name.lower() is "argentina":
+                    global argentina_timer
+                    argentina_timer = reset_timer()
+                  elif post.subreddit.display_name.lower() is "republicaargentina":
+                    global RepublicaArgentina_timer
+                    RepublicaArgentina_timer = reset_timer()
+                  else:
+                    global republica_argentina_timer
+                    republica_argentina_timer = reset_timer() 
                 else:
                   print("Comment already replied", file=stderr)
                   print("---------------", file=stderr)
               else: 
-                print("Comment doesn't mention 'dolar' or 'dólar'", file=stderr)
+                print("Comment doesn't mention '!dolar' or '!dólar'", file=stderr)
                 print("---------------", file=stderr)
             else:
               print("Comment doesn't have body", file=stderr)
@@ -115,5 +132,10 @@ def check_new_posts(posts):
       print("Post was deleted", file=stderr)
       print("---------------", file=stderr)
 
-def run_bot(subreddit_handler):
-  check_new_posts(subreddit_handler.new(limit=5))
+def run_bot(subreddits_handler):
+  if time() - argentina_timer >= 600:
+    check_new_posts(subreddits_handler[0].new(limit=5))
+  if time() - republica_argentina_timer >= 600:
+    check_new_posts(subreddits_handler[1].new(limit=5))
+  if time() - RepublicaArgentina_timer >= 600:
+    check_new_posts(subreddits_handler[2].new(limit=5))
