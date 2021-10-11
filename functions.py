@@ -14,7 +14,6 @@ def reset_timer():
 # I discount the waiting time in the initial declaration so the first loop gets done immediately
 RepublicaArgentina_timer = reset_timer() - 600
 republica_argentina_timer = reset_timer() - 600
-argentina_timer = reset_timer() - 600
 
 def init_praw():
   return Reddit(
@@ -77,8 +76,9 @@ def reply_comment(comment):
   reply = "El dólar oficial cotiza a AR" + dolar_values[0] + " para compra y AR" + dolar_values[1] + " para venta" + "\n" + "\n"
   reply += "El dólar blue cotiza a AR" + dolar_values[2] + " para compra y AR" + dolar_values[3] + " para venta" + "\n" + "\n"
   reply += "Información actualizada al " + datetime.now(pytz.timezone('America/Argentina/Buenos_Aires')).strftime("%d/%m/%Y %H:%M:%S") + " desde [dólar hoy](https://dolarhoy.com/)" + "\n" + "\n"
-  reply += "^(Soy un bot y esta acción fue realizada automáticamente)" + "\n" + "\n" + "^(Feedback? Bugs? )[^(Contactá al desarrollador)](mailto:marcosmartinezpalermo@gmail.com)" + "\n" + "\n" "[^(Github)](https://github.com/marcosmarp/dolar-bot)"
+  reply += "^(Soy un bot y esta acción fue realizada automáticamente)" + "\n" + "\n" + "^(Feedback? Bugs?: )[^(Github)](https://github.com/marcosmarp/dolar-bot)"
   comment.reply(reply)
+  sleep(5)
 
 def inform_reply_on_screen(comment):
   now = datetime.now(pytz.timezone('America/Argentina/Buenos_Aires'))
@@ -104,10 +104,7 @@ def check_new_posts(posts):
                   reply_comment(comment)
                   inform_reply_on_screen(comment)
                   store_reply(comment)
-                  if post.subreddit.display_name.lower() == "argentina":
-                    global argentina_timer
-                    argentina_timer = reset_timer()
-                  elif post.subreddit.display_name.lower() == "republicaargentina":
+                  if post.subreddit.display_name.lower() == "republicaargentina":
                     global RepublicaArgentina_timer
                     RepublicaArgentina_timer = reset_timer()
                   else:
@@ -134,8 +131,7 @@ def check_new_posts(posts):
       print("---------------", file=stderr)
 
 def run_bot(subreddits_handler):
-  if time() - argentina_timer >= 600:
-    check_new_posts(subreddits_handler[0].new(limit=5))
+  check_new_posts(subreddits_handler[0].new(limit=5))
   if time() - republica_argentina_timer >= 600:
     check_new_posts(subreddits_handler[1].new(limit=5))
   if time() - RepublicaArgentina_timer >= 600:
