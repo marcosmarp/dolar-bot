@@ -116,4 +116,4 @@ def check_new_posts(posts):
       print("---------------", file=stderr)
 
 def run_bot(subreddit_handler):
-  check_new_posts(subreddit_handler.new(limit=10))
+  check_new_posts(subreddit_handler.new(limit=5))
