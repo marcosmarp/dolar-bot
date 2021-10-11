@@ -104,15 +104,16 @@ def check_new_posts(posts):
                   reply_comment(comment)
                   inform_reply_on_screen(comment)
                   store_reply(comment)
-                  if post.subreddit.display_name.lower() is "argentina":
+                  if post.subreddit.display_name.lower() == "argentina":
                     global argentina_timer
                     argentina_timer = reset_timer()
-                  elif post.subreddit.display_name.lower() is "republicaargentina":
+                  elif post.subreddit.display_name.lower() == "republicaargentina":
                     global RepublicaArgentina_timer
                     RepublicaArgentina_timer = reset_timer()
                   else:
                     global republica_argentina_timer
-                    republica_argentina_timer = reset_timer() 
+                    republica_argentina_timer = reset_timer()
+                  return
                 else:
                   print("Comment already replied", file=stderr)
                   print("---------------", file=stderr)
