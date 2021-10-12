@@ -12,7 +12,6 @@ def reset_timer():
   return time()
 
 # I discount the waiting time in the initial declaration so the first loop gets done immediately
-RepublicaArgentina_timer = reset_timer() - 600
 republica_argentina_timer = reset_timer() - 600
 
 def init_praw():
@@ -104,10 +103,7 @@ def check_new_posts(posts):
                   reply_comment(comment)
                   inform_reply_on_screen(comment)
                   store_reply(comment)
-                  if post.subreddit.display_name.lower() == "republicaargentina":
-                    global RepublicaArgentina_timer
-                    RepublicaArgentina_timer = reset_timer()
-                  else:
+                  if post.subreddit.display_name.lower() == "republica_argentina":
                     global republica_argentina_timer
                     republica_argentina_timer = reset_timer()
                   return
@@ -134,5 +130,3 @@ def run_bot(subreddits_handler):
   check_new_posts(subreddits_handler[0].new(limit=5))
   if time() - republica_argentina_timer >= 600:
     check_new_posts(subreddits_handler[1].new(limit=5))
-  if time() - RepublicaArgentina_timer >= 600:
-    check_new_posts(subreddits_handler[2].new(limit=5))
