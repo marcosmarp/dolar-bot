@@ -136,7 +136,7 @@ def log_err(string):
 def run_bot(subreddits_handler):
   if time() - timers.argentina >= 600:
     check_new_posts(subreddits_handler[0].new(limit=5))
-  if time() - timers.republica_argentina >= 600:
+  if time() - timers.Republica_Argentina >= 600:
     check_new_posts(subreddits_handler[1].new(limit=5))
   if time() - timers.RepublicaArgentina >= 600:
     check_new_posts(subreddits_handler[2].new(limit=5))
