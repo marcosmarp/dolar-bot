@@ -11,9 +11,10 @@ from bs4 import BeautifulSoup
 def reset_timer():
   return time()
 
-# I discount the waiting time in the initial declaration so the first loop gets done immediately
-RepublicaArgentina_timer = reset_timer() - 600
-republica_argentina_timer = reset_timer() - 600
+commands = ["!dolar", "!dólar"]
+subreddits = ["RepublicaArgentina", "Republica_Argentina", "argentina"] # Display name is case sensitive
+timers = dict.fromkeys(subreddits, reset_timer() - 600) # I discount the waiting time in the initial declaration so the first loop gets done immediately
+
 
 def init_praw():
   return Reddit(
@@ -76,9 +77,8 @@ def reply_comment(comment):
   reply = "El dólar oficial cotiza a AR" + dolar_values[0] + " para compra y AR" + dolar_values[1] + " para venta" + "\n" + "\n"
   reply += "El dólar blue cotiza a AR" + dolar_values[2] + " para compra y AR" + dolar_values[3] + " para venta" + "\n" + "\n"
   reply += "Información actualizada al " + datetime.now(pytz.timezone('America/Argentina/Buenos_Aires')).strftime("%d/%m/%Y %H:%M:%S") + " desde [dólar hoy](https://dolarhoy.com/)" + "\n" + "\n"
-  reply += "^(Soy un bot y esta acción fue realizada automáticamente)" + "\n" + "\n" + "^(Feedback? Bugs?: )[^(Github)](https://github.com/marcosmarp/dolar-bot)"
+  reply += "^(Soy un bot y esta acción fue realizada automáticamente)" + "\n" + "\n" + "^(Feedback? Bugs? )[^(Contactá al desarrollador)](mailto:marcosmartinezpalermo@gmail.com)" + "\n" + "\n" "[^(Github)](https://github.com/marcosmarp/dolar-bot)"
   comment.reply(reply)
-  sleep(5)
 
 def inform_reply_on_screen(comment):
   now = datetime.now(pytz.timezone('America/Argentina/Buenos_Aires'))
@@ -88,51 +88,55 @@ def inform_reply_on_screen(comment):
 
 def check_new_posts(posts):
   for post in posts:
-    if post.author is not None: # Check that the post wasn't deleted
-      print("Checking " + post.author.name + "'s '" + post.title + "' post", file=stderr)
-      if post_have_comments(post):
-        print(" Post have comments", file=stderr)
-        for comment in post.comments:
-          if comment.author is not None: # Check that the comment wasn't deleted
-            print("   Checking " + comment.author.name + "'s comment", file=stderr)
-            if hasattr(comment, "body"):
-              print("     Comment have body", file=stderr)
-              if "!dolar" in comment.body.lower() or "!dólar" in comment.body.lower():
-                print("       Comment mentions '!dolar' or '!dólar'", file=stderr)
-                if not AlreadyReplied(comment.replies):
-                  print("         Comment yet to be replied", file=stderr)
-                  reply_comment(comment)
-                  inform_reply_on_screen(comment)
-                  store_reply(comment)
-                  if post.subreddit.display_name.lower() == "republicaargentina":
-                    global RepublicaArgentina_timer
-                    RepublicaArgentina_timer = reset_timer()
-                  else:
-                    global republica_argentina_timer
-                    republica_argentina_timer = reset_timer()
-                  return
-                else:
-                  print("Comment already replied", file=stderr)
-                  print("---------------", file=stderr)
-              else: 
-                print("Comment doesn't mention '!dolar' or '!dólar'", file=stderr)
-                print("---------------", file=stderr)
-            else:
-              print("Comment doesn't have body", file=stderr)
-              print("---------------", file=stderr)
-          else:
-            print("Comment was deleted", file=stderr)
-            print("---------------", file=stderr)
-      else:
-        print("Post doesn't have comments", file=stderr)
-        print("---------------", file=stderr)
-    else:
-      print("Post was deleted", file=stderr)
-      print("---------------", file=stderr)
+    if post.author is None: # Check that the post wasn't deleted
+      return
+
+    print("Checking " + post.author.name + "'s '" + post.title + "' post", file=stderr)
+    if not post_have_comments(post):
+      log_err("Post doesn't have comments")
+      return
+
+    print(" Post has comments", file=stderr)
+
+    for comment in post.comments:
+      if comment.author is None: # Check that the comment wasn't deleted
+        log_err("Comment was deleted")
+        continue
+
+      print("   Checking " + comment.author.name + "'s comment", file=stderr)
+      if not hasattr(comment, "body"):
+        log_err("Comment doesn't have body")
+        continue
+
+      print("     Comment has body", file=stderr)
+      if not any(x in comment.body.lower() for x in commands):
+        log_err("Comment doesn't mention '!dolar' or '!dólar'")
+        continue
+
+      print("       Comment mentions '!dolar' or '!dólar'", file=stderr)
+      if AlreadyReplied(comment.replies):
+        log_err("Comment already replied")
+        continue
+
+      print("         Comment yet to be replied", file=stderr)
+      reply_comment(comment)
+      inform_reply_on_screen(comment)
+      store_reply(comment)
+      reset_timers(post.subreddit.display_name, timers)
+
+def reset_timers(subreddit_name, timers):
+  if subreddit_name in timers:
+    timers[subreddit_name] = reset_timer() 
+
+
+def log_err(string):
+  print(string, file=stderr)
+  print("---------------", file=stderr)
 
 def run_bot(subreddits_handler):
-  check_new_posts(subreddits_handler[0].new(limit=5))
-  if time() - republica_argentina_timer >= 600:
+  if time() - timers.argentina >= 600:
+    check_new_posts(subreddits_handler[0].new(limit=5))
+  if time() - timers.republica_argentina >= 600:
     check_new_posts(subreddits_handler[1].new(limit=5))
-  if time() - RepublicaArgentina_timer >= 600:
+  if time() - timers.RepublicaArgentina >= 600:
     check_new_posts(subreddits_handler[2].new(limit=5))
