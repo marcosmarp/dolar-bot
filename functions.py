@@ -127,7 +127,7 @@ def check_new_posts(posts):
       print("---------------", file=stderr)
 
 def run_bot(subreddits_handler):
-  check_new_posts(subreddits_handler[0].new(limit=5))
+  check_new_posts(subreddits_handler[0].new(limit=15))
   if time() - republica_argentina_timer >= 600:
-    check_new_posts(subreddits_handler[1].new(limit=5))
+    check_new_posts(subreddits_handler[1].new(limit=15))
   sleep(30)
