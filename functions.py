@@ -130,3 +130,4 @@ def run_bot(subreddits_handler):
   check_new_posts(subreddits_handler[0].new(limit=5))
   if time() - republica_argentina_timer >= 600:
     check_new_posts(subreddits_handler[1].new(limit=5))
+  sleep(30)
