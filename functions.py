@@ -11,9 +11,6 @@ from bs4 import BeautifulSoup
 def reset_timer():
   return time()
 
-# I discount the waiting time in the initial declaration so the first loop gets done immediately
-republica_argentina_timer = reset_timer() - 600
-
 def init_praw():
   return Reddit(
     client_id = environ['CLIENT_ID'],
@@ -103,9 +100,6 @@ def check_new_posts(posts):
                   reply_comment(comment)
                   inform_reply_on_screen(comment)
                   store_reply(comment)
-                  if post.subreddit.display_name.lower() == "republica_argentina":
-                    global republica_argentina_timer
-                    republica_argentina_timer = reset_timer()
                   return
                 else:
                   print("Comment already replied", file=stderr)
@@ -126,8 +120,6 @@ def check_new_posts(posts):
       print("Post was deleted", file=stderr)
       print("---------------", file=stderr)
 
-def run_bot(subreddits_handler):
-  check_new_posts(subreddits_handler[0].new(limit=15))
-  if time() - republica_argentina_timer >= 600:
-    check_new_posts(subreddits_handler[1].new(limit=15))
+def run_bot(subreddit_handler):
+  check_new_posts(subreddit_handler.new(limit=15))
   sleep(30)
