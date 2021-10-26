@@ -29,30 +29,6 @@ def AlreadyReplied(replies):
       return True
   return False
 
-def store_reply(comment):
-  amount_of_lines = 0
-  with open("replies.txt", "r", encoding='utf-8') as file_object:
-    for line in file_object:
-      amount_of_lines += 1
-    file_object.close()
-  with open("replies.txt", "a", encoding='utf-8') as file_object:
-    file_object.write("Reply #" + str(int(amount_of_lines/8 + 1)))
-    file_object.write("\n")
-    file_object.write(" Replied comment data:")
-    file_object.write("\n")
-    file_object.write("   Author: " + comment.author.name)
-    file_object.write("\n")
-    file_object.write("   Link: https://www.reddit.com" + comment.permalink)
-    file_object.write("\n")
-    file_object.write("   Post:")
-    file_object.write("\n")
-    file_object.write("     Title: " + comment.submission.title)
-    file_object.write("\n")
-    file_object.write("     Author: " + comment.submission.author.name)
-    file_object.write("\n")
-    file_object.write("     Link: https://www.reddit.com" + comment.submission.permalink)
-    file_object.write("\n")
-
 def get_dolar_values():
   dolar_oficial_page = get("https://dolarhoy.com/cotizaciondolaroficial")
   dolar_blue_page = get("https://dolarhoy.com/cotizaciondolarblue")
@@ -132,7 +108,6 @@ def check_new_posts(posts):
                   print("         Comment yet to be replied", file=stderr)
                   reply_comment(comment)
                   inform_reply_on_screen(comment)
-                  store_reply(comment)
                   return
                 else:
                   print("Comment already replied", file=stderr)
