@@ -15,7 +15,7 @@ def init_praw():
   return Reddit(
     client_id = environ['CLIENT_ID'],
     client_secret = environ['CLIENT_SECRET'],
-    user_agent="console:dolar-bot:v1.0.0 (by u/dolar-bot)",
+    user_agent="console:dolar-bot:v1.1.0 (by u/dolar-bot)",
     username = "dolar-bot",
     password = environ['PASSWORD']
   )
@@ -56,23 +56,56 @@ def store_reply(comment):
 def get_dolar_values():
   dolar_oficial_page = get("https://dolarhoy.com/cotizaciondolaroficial")
   dolar_blue_page = get("https://dolarhoy.com/cotizaciondolarblue")
+  dolar_bolsa_page = get("https://dolarhoy.com/cotizaciondolarbolsa")
+  dolar_ccl_page = get("https://dolarhoy.com/cotizaciondolarcontadoconliqui")
+  dolar_solidario_page = get("https://dolarhoy.com/cotizaciondolarturista")
+  dolar_turista_page = get("https://dolarhoy.com/cotizaciondolarsolidario")
 
   dolar_oficial_soup = BeautifulSoup(dolar_oficial_page.content, "html.parser")
   dolar_blue_soup = BeautifulSoup(dolar_blue_page.content, "html.parser")
+  dolar_bolsa_soup = BeautifulSoup(dolar_bolsa_page.content, "html.parser")
+  dolar_ccl_soup = BeautifulSoup(dolar_ccl_page.content, "html.parser")
+  dolar_solidario_soup = BeautifulSoup(dolar_solidario_page.content, "html.parser")
+  dolar_turista_soup = BeautifulSoup(dolar_turista_page.content, "html.parser")
 
   dolar_oficial_compra = dolar_oficial_soup.select('.value')[0].string
   dolar_oficial_venta = dolar_oficial_soup.select('.value')[1].string
   dolar_blue_compra = dolar_blue_soup.select('.value')[0].string
   dolar_blue_venta = dolar_blue_soup.select('.value')[1].string
+  dolar_bolsa_compra = dolar_bolsa_soup.select('.value')[0].string
+  dolar_bolsa_venta = dolar_bolsa_soup.select('.value')[1].string
+  dolar_ccl_compra = dolar_ccl_soup.select('.value')[0].string
+  dolar_ccl_venta = dolar_ccl_soup.select('.value')[1].string
+  dolar_solidario_venta = dolar_solidario_soup.select('.value')[0].string
+  dolar_turista_venta = dolar_turista_soup.select('.value')[0].string
 
-  return [dolar_oficial_compra, dolar_oficial_venta, dolar_blue_compra, dolar_blue_venta]
+  return [dolar_oficial_compra, dolar_oficial_venta, dolar_blue_compra, dolar_blue_venta, 
+  dolar_bolsa_compra, dolar_bolsa_venta, dolar_ccl_compra, dolar_ccl_venta, dolar_solidario_venta, dolar_turista_venta]
 
 def reply_comment(comment):
   dolar_values = get_dolar_values() 
-  reply = "El dólar oficial cotiza a AR" + dolar_values[0] + " para compra y AR" + dolar_values[1] + " para venta" + "\n" + "\n"
-  reply += "El dólar blue cotiza a AR" + dolar_values[2] + " para compra y AR" + dolar_values[3] + " para venta" + "\n" + "\n"
-  reply += "Información actualizada al " + datetime.now(pytz.timezone('America/Argentina/Buenos_Aires')).strftime("%d/%m/%Y %H:%M:%S") + " desde [dólar hoy](https://dolarhoy.com/)" + "\n" + "\n"
-  reply += "^(Soy un bot y esta acción fue realizada automáticamente)" + "\n" + "\n" + "^(Feedback? Bugs?: )[^(Github)](https://github.com/marcosmarp/dolar-bot)"
+
+  reply = """
+  |Divisa|Compra|Venta|
+  |:-|:-|:-|
+  |**Oficial**|AR{0}|AR{1}|
+  |**Blue**|AR{2}|AR{3}|
+  |**MEP/Bolsa**|AR{4}|AR{5}|
+  |**CCL**|AR{6}|AR{7}|'
+  |**Solidario** (+30% impuestos)|\-|AR{8}|
+  |**Ahorro/Tarjeta/Turista** (+64% impuestos)|\-|AR{9}|
+
+  Información actualizada al {10} desde [dólar hoy](https://dolarhoy.com/)
+  
+  ^(Soy un bot y esta acción fue realizada automáticamente)
+  
+  ^(Feedback? Bugs?: )[^(Github)](https://github.com/marcosmarp/dolar-bot)
+  """
+
+  reply = reply.format(dolar_values[0], dolar_values[1], dolar_values[2], dolar_values[3], dolar_values[4], 
+  dolar_values[5], dolar_values[6], dolar_values[7], dolar_values[8], dolar_values[9], 
+  datetime.now(pytz.timezone('America/Argentina/Buenos_Aires')).strftime("%d/%m/%Y %H:%M:%S"))
+
   comment.reply(reply)
   sleep(5)
 
