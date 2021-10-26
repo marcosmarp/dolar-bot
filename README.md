@@ -1,0 +1,11 @@
+# Dolar-Bot
+Reddit bot for answering 'dolar' mentions with the official, underground and the rest of the multiple cotizations of it in AR$ pesos.
+
+# Usage
+Just mention !dolar or !dólar in any of the latest 15 posts in [r/argentina](https://reddit.com/r/argentina) subreddit
+
+# Bugs report
+Create an issue in the repo with a clear description of the bug
+
+# Pull requests
+Anyone is free to make PR's. For new features, the PR have to follow the basic idea of the bot: give cotizations in AR$, nothing else.
