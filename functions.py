@@ -1,3 +1,4 @@
+from logging import log
 from praw import Reddit
 from os import environ
 from sys import stderr
@@ -19,6 +20,10 @@ def init_praw():
     username = "dolar-bot",
     password = environ['PASSWORD']
   )
+
+def log_error(message):
+  print(message, file=stderr)
+  print("---------------", file=stderr)
 
 def post_have_comments(post):
   return (post.num_comments > 0)
@@ -93,40 +98,38 @@ def inform_reply_on_screen(comment):
 
 def check_new_posts(posts):
   for post in posts:
-    if post.author is not None: # Check that the post wasn't deleted
-      print("Checking " + post.author.name + "'s '" + post.title + "' post", file=stderr)
-      if post_have_comments(post):
-        print(" Post have comments", file=stderr)
-        for comment in post.comments:
-          if comment.author is not None: # Check that the comment wasn't deleted
-            print("   Checking " + comment.author.name + "'s comment", file=stderr)
-            if hasattr(comment, "body"):
-              print("     Comment have body", file=stderr)
-              if "!dolar" in comment.body.lower() or "!dólar" in comment.body.lower():
-                print("       Comment mentions '!dolar' or '!dólar'", file=stderr)
-                if not AlreadyReplied(comment.replies):
-                  print("         Comment yet to be replied", file=stderr)
-                  reply_comment(comment)
-                  inform_reply_on_screen(comment)
-                  return
-                else:
-                  print("Comment already replied", file=stderr)
-                  print("---------------", file=stderr)
-              else: 
-                print("Comment doesn't mention '!dolar' or '!dólar'", file=stderr)
-                print("---------------", file=stderr)
-            else:
-              print("Comment doesn't have body", file=stderr)
-              print("---------------", file=stderr)
-          else:
-            print("Comment was deleted", file=stderr)
-            print("---------------", file=stderr)
-      else:
-        print("Post doesn't have comments", file=stderr)
-        print("---------------", file=stderr)
-    else:
-      print("Post was deleted", file=stderr)
-      print("---------------", file=stderr)
+    if post.author is None:
+      log_error("Post deleted")
+      continue
+    print("Checking " + post.author.name + "'s '" + post.title + "' post", file=stderr)
+
+    if not post_have_comments(post):
+      log_error("Post doesn't have comments")
+      continue
+    print(" Post have comments", file=stderr)
+
+    for comment in post.comments:
+      if comment.author is None: # Check that the comment wasn't deleted:
+        log_error("Comment deleted")
+        continue
+      print("   Checking " + comment.author.name + "'s comment", file=stderr)
+
+      if not hasattr(comment, "body"):
+        log_error("Empty comment")
+        continue
+      print("     Comment have body", file=stderr)
+
+      if not "!dolar" in comment.body.lower() and not "!dólar" in comment.body.lower():
+        log_error("Comment doesn't mention '!dolar' or '!dólar'")
+        continue
+      print("       Comment mentions '!dolar' or '!dólar'", file=stderr)
+
+      if AlreadyReplied(comment.replies):
+        log_error("Comment already replied")
+        continue
+      print("         Comment yet to be replied", file=stderr)
+      reply_comment(comment)
+      inform_reply_on_screen(comment)
 
 def run_bot(subreddit_handler):
   check_new_posts(subreddit_handler.new(limit=15))

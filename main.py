@@ -7,6 +7,8 @@ test_subreddit = reddit_handler.subreddit("dolarbot")
 
 while(True):
   try:
-    run_bot(argentina_subreddit)
+    run_bot(test_subreddit)
+  except KeyboardInterrupt: # For quitting with ctrl+C
+    break
   except:
-    print("Reddit exception", file=stderr)
+    print("Reddit exception")
