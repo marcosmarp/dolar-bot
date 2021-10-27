@@ -121,6 +121,7 @@ def check_comments(comments):
       print("         Comment yet to be replied", file=stderr)
       reply_comment(comment)
       inform_reply_on_screen(comment)
+      return
 
 def check_new_posts(posts):
   for post in posts:
