@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from locale import setlocale, LC_ALL, format
 setlocale(LC_ALL, 'es_AR')
 
-commands = ['!dolar', '!dólar', '!cripto']
+commands = ['!dolar', '!dólar', '!cripto', '!crypto']
 
 def init_praw():
   return Reddit(
@@ -176,7 +176,7 @@ def check_comments(comments):
 
       if command == "!dolar" or command == "!dólar":
         reply_comment(comment, generate_dolar_reply())
-      elif command == "!cripto":
+      elif command == "!cripto" or command == '!crypto':
         reply_comment(comment, generate_cripto_reply())    
       inform_reply_on_screen(comment)
 
