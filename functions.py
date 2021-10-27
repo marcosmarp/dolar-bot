@@ -73,8 +73,8 @@ def reply_comment(comment):
   |**Blue**|AR{2}|AR{3}|
   |**MEP/Bolsa**|AR{4}|AR{5}|
   |**CCL**|AR{6}|AR{7}|'
-  |**Solidario** (+30% impuestos)|\-|AR{8}|
-  |**Ahorro/Tarjeta/Turista** (+64% impuestos)|\-|AR{9}|
+  |**Solidario** (+30%)|\-|AR{8}|
+  |**Tarjeta** (+64%)|\-|AR{9}|
 
   Información actualizada al {10} desde [dólar hoy](https://dolarhoy.com/)
   
