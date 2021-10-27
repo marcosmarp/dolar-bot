@@ -136,7 +136,7 @@ def check_new_posts(posts):
       continue
     print(" Post have comments", file=stderr)
 
-    check_comments(post.comments)
+    check_comments(post.comments.replace_more(limit=None))
 
     
 
