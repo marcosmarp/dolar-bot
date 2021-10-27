@@ -98,7 +98,8 @@ def inform_reply_on_screen(comment):
 
 def check_comments(comments):
   for comment in comments:
-      check_comments(comment.replies)
+      if hasattr(comment, "replies"):
+        check_comments(comment.replies)
 
       if comment.author is None:
         log_error("Comment deleted")
