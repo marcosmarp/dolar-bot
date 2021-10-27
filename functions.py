@@ -1,7 +1,7 @@
 from praw import Reddit
 from os import environ
 from sys import stderr
-from time import sleep, time
+from time import sleep
 import cryptocompare
 import pytz
 from datetime import datetime
@@ -11,9 +11,6 @@ from locale import setlocale, LC_ALL, format
 setlocale(LC_ALL, 'es_AR')
 
 commands = ['!dolar', '!dólar', '!cripto']
-
-def reset_timer():
-  return time()
 
 def init_praw():
   return Reddit(
@@ -68,7 +65,7 @@ def get_dolar_values():
 
 def reply_comment(comment, reply):
   comment.reply(reply)
-  sleep(5)
+  sleep(30)
 
 def generate_dolar_reply():
   dolar_values = get_dolar_values() 
@@ -183,7 +180,7 @@ def check_comments(comments):
         reply_comment(comment, generate_cripto_reply())    
       inform_reply_on_screen(comment)
 
-      return
+      continue
 
 def check_new_posts(posts):
   for post in posts:
@@ -201,4 +198,3 @@ def check_new_posts(posts):
 
 def run_bot(subreddit_handler):
   check_new_posts(subreddit_handler.new(limit=15))
-  sleep(30)
