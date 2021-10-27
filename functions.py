@@ -96,20 +96,11 @@ def inform_reply_on_screen(comment):
   print("           " + dt_string + ": replied " + comment.author.name + "'s comment", file=stderr)
   print("---------------", file=stderr)
 
-def check_new_posts(posts):
-  for post in posts:
-    if post.author is None:
-      log_error("Post deleted")
-      continue
-    print("Checking " + post.author.name + "'s '" + post.title + "' post", file=stderr)
+def check_comments(comments):
+  for comment in comments:
+      check_comments(comment.replies)
 
-    if not post_have_comments(post):
-      log_error("Post doesn't have comments")
-      continue
-    print(" Post have comments", file=stderr)
-
-    for comment in post.comments:
-      if comment.author is None: # Check that the comment wasn't deleted:
+      if comment.author is None:
         log_error("Comment deleted")
         continue
       print("   Checking " + comment.author.name + "'s comment", file=stderr)
@@ -130,6 +121,22 @@ def check_new_posts(posts):
       print("         Comment yet to be replied", file=stderr)
       reply_comment(comment)
       inform_reply_on_screen(comment)
+
+def check_new_posts(posts):
+  for post in posts:
+    if post.author is None:
+      log_error("Post deleted")
+      continue
+    print("Checking " + post.author.name + "'s '" + post.title + "' post", file=stderr)
+
+    if not post_have_comments(post):
+      log_error("Post doesn't have comments")
+      continue
+    print(" Post have comments", file=stderr)
+
+    check_comments(post.comments)
+
+    
 
 def run_bot(subreddit_handler):
   check_new_posts(subreddit_handler.new(limit=15))
