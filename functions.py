@@ -101,15 +101,15 @@ def check_comments(comments):
       if hasattr(comment, "replies"):
         check_comments(comment.replies)
 
-      if comment.author is None:
-        log_error("Comment deleted")
-        continue
-      print("   Checking " + comment.author.name + "'s comment", file=stderr)
-
       if not hasattr(comment, "body"):
         log_error("Empty comment")
         continue
       print("     Comment have body", file=stderr)
+
+      if comment.author is None:
+        log_error("Comment deleted")
+        continue
+      print("   Checking " + comment.author.name + "'s comment", file=stderr)
 
       if not "!dolar" in comment.body.lower() and not "!dólar" in comment.body.lower():
         log_error("Comment doesn't mention '!dolar' or '!dólar'")
