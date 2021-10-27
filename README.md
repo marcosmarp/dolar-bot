@@ -1,5 +1,5 @@
 # Dolar-Bot
-Reddit bot for answering 'dolar' mentions with the official, underground and the rest of the multiple cotizations of it in AR$ pesos.
+Reddit bot for answering 'dolar' mentions with the official, underground and the rest of the multiple cotizations of it in AR$ pesos. It also answers '!cripto' mentions with the latest cotization of the top 10 market cap criptocurrencies in AR$.
 
 # Usage
 Just mention !dolar or !dólar in any of the latest 15 posts in [r/argentina](https://reddit.com/r/argentina) subreddit
