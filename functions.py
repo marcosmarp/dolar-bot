@@ -180,7 +180,7 @@ def check_comments(comments):
         reply_comment(comment, generate_cripto_reply())    
       inform_reply_on_screen(comment)
 
-      return
+      continue
 
 def check_new_posts(posts):
   for post in posts:
