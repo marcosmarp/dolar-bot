@@ -1,13 +1,14 @@
-from logging import log
 from praw import Reddit
 from os import environ
 from sys import stderr
 from time import sleep, time
-from praw.reddit import Subreddit
+import cryptocompare
 import pytz
 from datetime import datetime
 from requests import get
 from bs4 import BeautifulSoup
+from locale import setlocale, LC_ALL, format
+setlocale(LC_ALL, 'es_AR')
 
 commands = ['!dolar', '!dólar', '!cripto']
 
@@ -65,29 +66,6 @@ def get_dolar_values():
   return [dolar_oficial_compra, dolar_oficial_venta, dolar_blue_compra, dolar_blue_venta, 
   dolar_bolsa_compra, dolar_bolsa_venta, dolar_ccl_compra, dolar_ccl_venta, dolar_solidario_venta, dolar_turista_venta]
 
-def get_cripto_values():
-  bitcoin_page = get("https://www.ripio.com/ar/bitcoin/cotizacion/")
-  ethereum_page = get("https://www.ripio.com/ar/ethereum/cotizacion/")
-  dai_page = get("https://www.ripio.com/ar/dai/cotizacion/")
-  usdc_page = get("https://www.ripio.com/ar/usdc/cotizacion/")
-
-  bitcoin_soup = BeautifulSoup(bitcoin_page.content, "html.parser")
-  ethereum_soup = BeautifulSoup(ethereum_page.content, "html.parser")
-  dai_soup = BeautifulSoup(dai_page.content, "html.parser")
-  usdc_soup = BeautifulSoup(usdc_page.content, "html.parser")
-
-  bitcoin_compra = bitcoin_soup.select('--buy')[0].string
-  bitcoin_venta = bitcoin_soup.select('--price')[1].string
-  ethereum_compra = ethereum_soup.select('--price')[0].string
-  ethereum_venta = ethereum_soup.select('--price')[1].string
-  dai_compra = dai_soup.select('--price')[0].string
-  dai_venta = dai_soup.select('--price')[1].string
-  usdc_compra = usdc_soup.select('--price')[0].string
-  usdc_venta = usdc_soup.select('--price')[1].string
-
-
-  return [bitcoin_compra, bitcoin_venta, ethereum_compra, ethereum_venta, dai_compra, dai_venta, usdc_compra, usdc_venta]
-
 def reply_comment(comment, reply):
   comment.reply(reply)
   sleep(5)
@@ -116,18 +94,36 @@ def generate_dolar_reply():
   dolar_values[5], dolar_values[6], dolar_values[7], dolar_values[8], dolar_values[9], 
   datetime.now(pytz.timezone('America/Argentina/Buenos_Aires')).strftime("%d/%m/%Y %H:%M:%S"))
 
+def format_float(num):
+  return format("%.2f", num, grouping=True)
+
+def get_cripto_values():
+  crypto_values = cryptocompare.get_price(['BTC', 'ETH', 'BNB', 'USDT', 'ADA', 'SOL', 'XRP', 'DOT', 'DOGE', 'SHIB' ], ['ARS'])
+
+  return [format_float(crypto_values['BTC']['ARS']), format_float(crypto_values['ETH']['ARS']), 
+  format_float(crypto_values['BNB']['ARS']), format_float(crypto_values['USDT']['ARS']), 
+  format_float(crypto_values['ADA']['ARS']), format_float(crypto_values['SOL']['ARS']), 
+  format_float(crypto_values['XRP']['ARS']), format_float(crypto_values['DOT']['ARS']), 
+  format_float(crypto_values['DOGE']['ARS']), format_float(crypto_values['SHIB']['ARS']*1000)]
+
 def generate_cripto_reply():
   cripto_values = get_cripto_values() 
 
   reply = """
-  |Divisa|Compra|Venta|
-  |:-|:-|:-|
-  |**Bitcoin**|AR{0}|AR{1}|
-  |**Ethereum**|AR{2}|AR{3}|
-  |**DAI**|AR{4}|AR{5}|
-  |**USDC**|AR{6}|AR{7}|'
+  |Divisa|Ultimo valor de trading|
+  |:-|:-|
+  |**BTC**|AR${0}|
+  |**ETH**|AR${1}|
+  |**BNB**|AR${2}|
+  |**USDT**|AR${3}|
+  |**ADA**|AR${4}|
+  |**SOL**|AR${5}|
+  |**XRP**|AR${6}|
+  |**DOT**|AR${7}|
+  |**DOGE**|AR${8}|
+  |**SHIB (x1000)**|AR${9}|
 
-  Información actualizada al {8} desde [ripio](https://www.ripio.com/ar/criptomonedas/cotizacion/)
+  Información actualizada al {10} desde [CryptoCompare](https://www.cryptocompare.com/coins/list/all/USD/1)
   
   ^(Soy un bot y esta acción fue realizada automáticamente)
   
@@ -135,7 +131,8 @@ def generate_cripto_reply():
   """
 
   return reply.format(cripto_values[0], cripto_values[1], cripto_values[2], cripto_values[3], cripto_values[4], 
-  cripto_values[5], cripto_values[6], cripto_values[7], datetime.now(pytz.timezone('America/Argentina/Buenos_Aires')).strftime("%d/%m/%Y %H:%M:%S"))
+  cripto_values[5], cripto_values[6], cripto_values[7], cripto_values[8], cripto_values[9],
+  datetime.now(pytz.timezone('America/Argentina/Buenos_Aires')).strftime("%d/%m/%Y %H:%M:%S"))
 
 def inform_reply_on_screen(comment):
   now = datetime.now(pytz.timezone('America/Argentina/Buenos_Aires'))
