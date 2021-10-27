@@ -73,12 +73,12 @@ def generate_dolar_reply():
   reply = """
   |Divisa|Compra|Venta|
   |:-|:-|:-|
-  |**Oficial**|AR{0}|AR{1}|
-  |**Blue**|AR{2}|AR{3}|
-  |**MEP/Bolsa**|AR{4}|AR{5}|
-  |**CCL**|AR{6}|AR{7}|'
-  |**Solidario** (+30%)|\-|AR{8}|
-  |**Tarjeta** (+64%)|\-|AR{9}|
+  |**Oficial**|ARS{0}|ARS{1}|
+  |**Blue**|ARS{2}|ARS{3}|
+  |**MEP/Bolsa**|ARS{4}|ARS{5}|
+  |**CCL**|ARS{6}|ARS{7}|
+  |**Solidario** (+30%)|\-|ARS{8}|
+  |**Tarjeta** (+64%)|\-|ARS{9}|
 
   Información actualizada al {10} desde [dólar hoy](https://dolarhoy.com/)
   
@@ -95,32 +95,37 @@ def format_float(num):
   return format("%.2f", num, grouping=True)
 
 def get_cripto_values():
-  crypto_values = cryptocompare.get_price(['BTC', 'ETH', 'BNB', 'USDT', 'ADA', 'SOL', 'XRP', 'DOT', 'DOGE', 'SHIB' ], ['ARS'])
+  crypto_values = cryptocompare.get_price(['BTC', 'ETH', 'BNB', 'USDT', 'ADA', 'SOL', 'XRP', 'DOT', 'DOGE', 'SHIB' ], ['ARS', 'USD'])
 
-  return [format_float(crypto_values['BTC']['ARS']), format_float(crypto_values['ETH']['ARS']), 
-  format_float(crypto_values['BNB']['ARS']), format_float(crypto_values['USDT']['ARS']), 
-  format_float(crypto_values['ADA']['ARS']), format_float(crypto_values['SOL']['ARS']), 
-  format_float(crypto_values['XRP']['ARS']), format_float(crypto_values['DOT']['ARS']), 
-  format_float(crypto_values['DOGE']['ARS']), format_float(crypto_values['SHIB']['ARS']*1000)]
+  return [format_float(crypto_values['BTC']['ARS']), format_float(crypto_values['BTC']['USD']),
+  format_float(crypto_values['ETH']['ARS']), format_float(crypto_values['ETH']['USD']),
+  format_float(crypto_values['BNB']['ARS']), format_float(crypto_values['BNB']['USD']),
+  format_float(crypto_values['USDT']['ARS']), format_float(crypto_values['USDT']['USD']),
+  format_float(crypto_values['ADA']['ARS']), format_float(crypto_values['ADA']['USD']),
+  format_float(crypto_values['SOL']['ARS']), format_float(crypto_values['SOL']['USD']),
+  format_float(crypto_values['XRP']['ARS']), format_float(crypto_values['XRP']['USD']),
+  format_float(crypto_values['DOT']['ARS']), format_float(crypto_values['DOT']['USD']),
+  format_float(crypto_values['DOGE']['ARS']), format_float(crypto_values['DOGE']['USD']),
+  format_float(crypto_values['SHIB']['ARS']*1000), format_float(crypto_values['SHIB']['USD']*1000)]
 
 def generate_cripto_reply():
   cripto_values = get_cripto_values() 
 
   reply = """
-  |Divisa|Ultimo valor de trading|
-  |:-|:-|
-  |**BTC**|AR${0}|
-  |**ETH**|AR${1}|
-  |**BNB**|AR${2}|
-  |**USDT**|AR${3}|
-  |**ADA**|AR${4}|
-  |**SOL**|AR${5}|
-  |**XRP**|AR${6}|
-  |**DOT**|AR${7}|
-  |**DOGE**|AR${8}|
-  |**SHIB (x1000)**|AR${9}|
+  |Divisa|ARS$|USD$|
+  |:-|:-|:-|
+  |**BTC**|ARS${0}|USD${1}|
+  |**ETH**|ARS${2}|USD${3}|
+  |**BNB**|ARS${4}|USD${5}|
+  |**USDT**|ARS${6}|USD${7}|
+  |**ADA**|ARS${8}|USD${9}|
+  |**SOL**|ARS${10}|USD${11}|
+  |**XRP**|ARS${12}|USD${13}|
+  |**DOT**|ARS${14}|USD${15}|
+  |**DOGE**|ARS${16}|USD${17}|
+  |**SHIB (x1000)**|ARS${18}|USD${19}|
 
-  Información actualizada al {10} desde [CryptoCompare](https://www.cryptocompare.com/coins/list/all/USD/1)
+  Información actualizada al {20} desde [CryptoCompare](https://www.cryptocompare.com/coins/list/all/USD/1) en base al último valor de trading registrado
   
   ^(Soy un bot y esta acción fue realizada automáticamente)
   
@@ -128,7 +133,9 @@ def generate_cripto_reply():
   """
 
   return reply.format(cripto_values[0], cripto_values[1], cripto_values[2], cripto_values[3], cripto_values[4], 
-  cripto_values[5], cripto_values[6], cripto_values[7], cripto_values[8], cripto_values[9],
+  cripto_values[5], cripto_values[6], cripto_values[7], cripto_values[8], cripto_values[9], cripto_values[10],
+  cripto_values[11], cripto_values[12], cripto_values[13], cripto_values[14], cripto_values[15], cripto_values[16],
+  cripto_values[17], cripto_values[18], cripto_values[19],
   datetime.now(pytz.timezone('America/Argentina/Buenos_Aires')).strftime("%d/%m/%Y %H:%M:%S"))
 
 def inform_reply_on_screen(comment):
