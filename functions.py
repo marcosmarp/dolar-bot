@@ -71,14 +71,14 @@ def generate_dolar_reply():
   dolar_values = get_dolar_values() 
 
   reply = """
-  |Divisa|Compra|Venta|
-  |:-|:-|:-|
-  |**Oficial**|ARS{0}|ARS{1}|
-  |**Blue**|ARS{2}|ARS{3}|
-  |**MEP/Bolsa**|ARS{4}|ARS{5}|
-  |**CCL**|ARS{6}|ARS{7}|
-  |**Solidario** (+30%)|\-|ARS{8}|
-  |**Tarjeta** (+64%)|\-|ARS{9}|
+  Divisa|Compra|Venta
+  :-|:-|:-
+  **Oficial**|ARS{0}|ARS{1}
+  **Blue**|ARS{2}|ARS{3}
+  **MEP/Bolsa**|ARS{4}|ARS{5}
+  **CCL**|ARS{6}|ARS{7}
+  **Solidario** (+30%)|\-|ARS{8}
+  **Tarjeta** (+64%)|\-|ARS{9}
 
   Información actualizada al {10} desde [dólar hoy](https://dolarhoy.com/)
   
@@ -112,18 +112,18 @@ def generate_cripto_reply():
   cripto_values = get_cripto_values() 
 
   reply = """
-  |Divisa|ARS$|USD$|
-  |:-|:-|:-|
-  |**BTC**|ARS${0}|USD${1}|
-  |**ETH**|ARS${2}|USD${3}|
-  |**BNB**|ARS${4}|USD${5}|
-  |**USDT**|ARS${6}|USD${7}|
-  |**ADA**|ARS${8}|USD${9}|
-  |**SOL**|ARS${10}|USD${11}|
-  |**XRP**|ARS${12}|USD${13}|
-  |**DOT**|ARS${14}|USD${15}|
-  |**DOGE**|ARS${16}|USD${17}|
-  |**SHIB (x1000)**|ARS${18}|USD${19}|
+  Divisa|ARS$|USD$
+  :-|:-|:-
+  **BTC**|ARS${0}|USD${1}
+  **ETH**|ARS${2}|USD${3}
+  **BNB**|ARS${4}|USD${5}
+  **USDT**|ARS${6}|USD${7}
+  **ADA**|ARS${8}|USD${9}
+  **SOL**|ARS${10}|USD${11}
+  **XRP**|ARS${12}|USD${13}
+  **DOT**|ARS${14}|USD${15}
+  **DOGE**|ARS${16}|USD${17}
+  **SHIB (x1000)**|ARS${18}|USD${19}
 
   Información actualizada al {20} desde [CryptoCompare](https://www.cryptocompare.com/coins/list/all/USD/1) en base al último valor de trading registrado
   
